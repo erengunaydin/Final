@@ -2,12 +2,16 @@
 
 ## What idea(s) do you have for your final project?
 
-TODO
+Discord Bot for music or something else
+Flashcard study app
+Animated music- takes your own input song and makes things react to the beats
+Maybe a mod for Minecraft/Terraria or the sims
+
 
 ## If you plan to collaborate with one or two classmates, what are their names?
 
-TODO
+None
 
 ## Do you have any questions of your own?
 
-TODO
+Nope
