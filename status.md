@@ -2,15 +2,15 @@
 
 #### Your name
 
-TODO
+Eren Gunaydin
 
 #### Your section leader's name
 
-TODO
+ELMIRA TALEBIANARAKI
 
 #### Project title
 
-TODO
+Musci Bot - A discord music bot
 
 ***
 
@@ -18,12 +18,12 @@ Short answers for the below questions suffice. If you want to alter your plan fo
 
 #### What have you done for your project so far?
 
-TODO
+I have done nothing so far. So this assignment is a big wake up call that I should probably get started.
 
 #### What have you not done for your project yet?
 
-TODO
+Nothing.
 
 #### What problems, if any, have you encountered?
 
-TODO
+The only problem I have is not starting my project earlier.
