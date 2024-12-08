@@ -19,7 +19,7 @@ def run_bot():
 
     @client.event
     async def on_ready():
-        print(f'{client.user} is now jamming')
+        print(f'{client.user} is now playing music')
 
         @client.event
         async def on_message(message):
@@ -27,4 +27,24 @@ def run_bot():
                 try:
                     voice_client = await message.author.voice.channel.connect()
                     voice_clients=[voice_client.guild.id] = voice_client
+                except Exception as e:
+                    print(e)
+
+                try:
+                    url = message.cotnent.split()[1]
                     
+                    loop = async.io.get_event_loop()
+                    data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=False))
+
+                    song = data['url']
+                    player = discord.FFmpegPCMAudio(song, **ffmpeg_options)
+
+                    voice_clients[message.guild.id].play(player)
+                except Exception as e:
+                    print(e)
+    
+    client.run(TOKEN)
+
+
+
+
