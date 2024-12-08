@@ -33,7 +33,7 @@ def run_bot():
                 try:
                     url = message.cotnent.split()[1]
                     
-                    loop = async.io.get_event_loop()
+                    loop = asyncio.get_event_loop()
                     data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=False))
 
                     song = data['url']
