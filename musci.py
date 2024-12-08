@@ -42,5 +42,42 @@ def run_bot():
                     voice_clients[message.guild.id].play(player)
                 except Exception as e:
                     print(e)
+            
+            if message.content.startswith("?pause"):
+                try:
+                    voice_clients[message.guild.id].pause()
+                except Exception as e:
+                    print(e)
+            
+            if message.content.startswith("?resume"):
+                try:
+                    voice_clients[message.guild.id].resume()
+                except Exception as e:
+                    print(e)
+
+            if message.content.startswith("?stop"):
+                try:
+                    voice_clients[message.guild.id].pause()
+                    await voice_clients[message.guild.id].disconnect()
+                except Exception as e:
+                    print(e)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     client.run(TOKEN)
