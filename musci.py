@@ -23,6 +23,11 @@ def run_bot():
     async def on_ready():
         print(f'{client.user} is now playing music')
 
+    aysnc def play_next(ctx):
+        if queues[ctx.guild.id] != []:
+            link = queues[ctx.guild.id].pop(0)
+            await play(ctx, link)
+
     @client.command(name="play")
     async def play(ctx, link):
         try:
@@ -40,7 +45,7 @@ def run_bot():
             
             player = discord.FFmpegOpusAudio(song_url, **ffmpeg_options)
 
-            voice_clients[ctx.guild.id].play(player)
+            voice_clients[ctx.guild.id].play(player, after=lambda e: asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop)
         
             embed = discord.Embed(
             title="Now Playing",
@@ -91,8 +96,12 @@ def run_bot():
         except Exception as e:
             print(e)
     
-    #@client.command(name="queue")
-    #async def queue(ctx, url):
+    @client.command(name="queue")
+    async def queue(ctx, url):
+        if ctx.guild.id not in queues:
+            queues[ctx.guild.id] = []
+        queues[ctx.guild.id].append(url)
+        await ctx.send("Added to queue!")
     
 
 
