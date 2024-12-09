@@ -2,7 +2,7 @@
 
 Forgot to put these in the video - Eren Gunaydin 2024
 # Musci Bot
-Video - 
+My Video - https://www.youtube.com/watch?v=7ROH2cP_7BA
 
 For my final project, I decided to create a Discord music bot.
 
