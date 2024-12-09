@@ -1,3 +1,5 @@
+![Musci](https://github.com/user-attachments/assets/89a2cc9c-1037-48ed-8b54-cb7b29b695c9)
+
 # Musci Bot
 Video - 
 
@@ -18,4 +20,3 @@ https://www.youtube.com/watch?v=n78m4NjhqGg&t=381s
 https://www.youtube.com/watch?v=wILcnFaO2lk
 
 https://www.youtube.com/playlist?list=PLIu2imXNCAquUtvzlCk_FalRnViAilvXZ
-![Musci](https://github.com/user-attachments/assets/c67a63f7-26ba-45cd-b650-8ba45772451b)
