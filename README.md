@@ -1,5 +1,6 @@
 # Musci Bot
 Video - 
+
 For my final project, I decided to create a Discord music bot.
 
 I decided to create this bot because Discord is actively trying to get rid of every single Discord music bot. Why they must do this, I don't know. But, I knew I needed to do something because my friends and I love listening to music together on Discord. So, this gave me the idea to make my own.
@@ -9,7 +10,11 @@ This was not going to be an easy task, however. I went into this thinking that t
 Overall, I loved this project. It taught me a lot about the Discord bot development process, and it got me to do something that I had wanted to do for a long time. I plan to host this bot 24/7 so that my friends and I can still use it. I also didn’t get all the features I wanted to add due to time, but I plan on adding some later on my own time.
 
 Here are the videos that helped me a lot when making my bot:
+
 https://www.youtube.com/watch?v=hHfzHVuRx7k
+
 https://www.youtube.com/watch?v=n78m4NjhqGg&t=381s
+
 https://www.youtube.com/watch?v=wILcnFaO2lk
+
 https://www.youtube.com/playlist?list=PLIu2imXNCAquUtvzlCk_FalRnViAilvXZ
