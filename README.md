@@ -1,2 +1,2 @@
-# Final
-Final Project
+# Final Project
+Musci Bot
