@@ -1,5 +1,6 @@
 ![Musci](https://github.com/user-attachments/assets/89a2cc9c-1037-48ed-8b54-cb7b29b695c9)
 
+Forgot to put these in the video - Eren Gunaydin 2024
 # Musci Bot
 Video - 
 
