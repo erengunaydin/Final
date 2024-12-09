@@ -42,6 +42,7 @@ def run_bot():
 
             song_title = data.get('title', 'Unknown Song')
             song_url = data['url']
+            thumbnail_url = data.get('thumbnail', None)
             
             player = discord.FFmpegOpusAudio(song_url, **ffmpeg_options)
 
@@ -52,6 +53,8 @@ def run_bot():
             description=f"{song_title}",
             color=discord.Color.blue()
         )
+            if thumbnail_url:
+                embed.set_thumbnail(url=thumbnail_url)
             await ctx.send(embed=embed)
         except Exception as e:
             print(e)
@@ -141,6 +144,21 @@ def run_bot():
             color=discord.Color.blue()
         )
         await ctx.send(embed=embed)
+
+    @client.command(name="shuffle")
+    async def shuffle(ctx):
+        if ctx.guild.id in queues and queues[ctx.guild.id]:
+            import random
+            random.shuffle(queues[ctx.guild.id])
+            embed = discord.Embed(
+                title="Queue Shuffled 🔀",
+                description="The queue has been shuffled!",
+                color=discord.Color.purple()
+            )
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send("There is no queue to shuffle!")
+
     
 
 
