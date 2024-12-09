@@ -4,6 +4,7 @@ import os
 import asyncio
 import yt_dlp
 from dotenv import load_dotenv
+import random
 
 def run_bot():
     load_dotenv()
@@ -17,26 +18,37 @@ def run_bot():
     yt_dl_options = {"format": "bestaudio/best"}
     ytdl = yt_dlp.YoutubeDL(yt_dl_options)
 
-    ffmpeg_options = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5','options': '-vn -filter:a "volume=0.25"'}
+    ffmpeg_options = {
+        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+        'options': '-vn -filter:a "volume=0.25"'
+    }
 
     @client.event
     async def on_ready():
         print(f'{client.user} is now playing music!')
 
     async def play_next(ctx):
-        if queues[ctx.guild.id] != []:
+        if ctx.guild.id not in queues:
+            queues[ctx.guild.id] = []
+
+        if queues[ctx.guild.id]:
             link = queues[ctx.guild.id].pop(0)
             await play(ctx, link)
+        else:
+            if ctx.guild.id in voice_clients:
+                await voice_clients[ctx.guild.id].disconnect()
+                del voice_clients[ctx.guild.id]
 
     @client.command(name="play")
     async def play(ctx, link):
-        try:
-            voice_client = await ctx.author.voice.channel.connect()
-            voice_clients[voice_client.guild.id] = voice_client
-        except Exception as e:
-            print(e)
+        if ctx.guild.id not in queues:
+            queues[ctx.guild.id] = []
 
         try:
+            if ctx.guild.id not in voice_clients:
+                voice_client = await ctx.author.voice.channel.connect()
+                voice_clients[ctx.guild.id] = voice_client
+
             loop = asyncio.get_event_loop()
             data = await loop.run_in_executor(None, lambda: ytdl.extract_info(link, download=False))
 
@@ -46,32 +58,89 @@ def run_bot():
             
             player = discord.FFmpegOpusAudio(song_url, **ffmpeg_options)
 
-            voice_clients[ctx.guild.id].play(player, after=lambda e: asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
+            if voice_clients[ctx.guild.id].is_playing():
+                voice_clients[ctx.guild.id].stop()
+
+            voice_clients[ctx.guild.id].play(
+                player, 
+                after=lambda e: asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop)
+            )
         
             embed = discord.Embed(
-            title="Now Playing 🎶",
-            description=f"{song_title}",
-            color=discord.Color.blue()
-        )
+                title="Now Playing 🎶",
+                description=f"{song_title}",
+                color=discord.Color.blue()
+            )
             if thumbnail_url:
                 embed.set_thumbnail(url=thumbnail_url)
             await ctx.send(embed=embed)
+
         except Exception as e:
-            print(e)
+            print(f"Error in play command: {e}")
+            await ctx.send(f"An error occurred while trying to play the song: {e}")
 
     @client.command(name="skip")
     async def skip(ctx):
         try:
+            if ctx.guild.id in voice_clients and voice_clients[ctx.guild.id].is_playing():
+                embed = discord.Embed(
+                    title="Skipped 🎶",
+                    description="Current song has been skipped. Playing the next song...",
+                    color=discord.Color.orange()
+                )
+                await ctx.send(embed=embed)
+                
+                voice_clients[ctx.guild.id].stop()
+            else:
+                embed = discord.Embed(
+                    title="No Song Playing ❌",
+                    description="There is no song currently playing to skip.",
+                    color=discord.Color.red()
+                )
+                await ctx.send(embed=embed)
+        except Exception as e:
+            print(f"Error in skip command: {e}")
+            await ctx.send(f"An error occurred while skipping: {e}")
+
+    @client.command(name="queue")
+    async def queue_cmd(ctx, url):
+        if ctx.guild.id not in queues:
+            queues[ctx.guild.id] = []
+
+        queues[ctx.guild.id].append(url)
+
+        embed = discord.Embed(
+            title="Song Added to Queue! 🎶",
+            description=f"The song has been added to the queue. Position: {len(queues[ctx.guild.id])}",
+            color=discord.Color.blue()
+        )
+        await ctx.send(embed=embed)
+
+    @client.command(name="viewqueue")
+    async def view_queue(ctx):
+        if ctx.guild.id in queues and queues[ctx.guild.id]:
             embed = discord.Embed(
-                title="Skipped 🎶",
-                description="Current song has been skipped. Playing the next song...",
-                color=discord.Color.orange()
+                title="Current Music Queue 📋",
+                color=discord.Color.green()
+            )
+            
+            for i, song_url in enumerate(queues[ctx.guild.id][:10], 1):
+                try:
+                    loop = asyncio.get_event_loop()
+                    data = await loop.run_in_executor(None, lambda: ytdl.extract_info(song_url, download=False))
+                    song_title = data.get('title', 'Unknown Song')
+                    embed.add_field(name=f"#{i}", value=song_title, inline=False)
+                except Exception as e:
+                    embed.add_field(name=f"#{i}", value=f"Could not fetch song info: {song_url}", inline=False)
+            
+            await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+                title="Queue is Empty 🚫",
+                description="There are no songs in the queue.",
+                color=discord.Color.red()
             )
             await ctx.send(embed=embed)
-            voice_clients[ctx.guild.id].stop()
-            await play_next(ctx)
-        except Exception as e:
-            print(e)
 
     @client.command(name="clearqueue")
     async def clearqueue(ctx):
@@ -131,24 +200,10 @@ def run_bot():
             await ctx.send(embed=embed)
         except Exception as e:
             print(e)
-    
-    @client.command(name="queue")
-    async def queue(ctx, url):
-        if ctx.guild.id not in queues:
-            queues[ctx.guild.id] = []
-        queues[ctx.guild.id].append(url)
-
-        embed = discord.Embed(
-            title="Song Added to Queue! 🎶",
-            description=f"The song has been addded to the queue: {url}",
-            color=discord.Color.blue()
-        )
-        await ctx.send(embed=embed)
 
     @client.command(name="shuffle")
     async def shuffle(ctx):
         if ctx.guild.id in queues and queues[ctx.guild.id]:
-            import random
             random.shuffle(queues[ctx.guild.id])
             embed = discord.Embed(
                 title="Queue Shuffled 🔀",
@@ -159,23 +214,4 @@ def run_bot():
         else:
             await ctx.send("There is no queue to shuffle!")
 
-    
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     client.run(TOKEN)
