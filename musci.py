@@ -21,7 +21,7 @@ def run_bot():
 
     @client.event
     async def on_ready():
-        print(f'{client.user} is now playing music')
+        print(f'{client.user} is now playing music!')
 
     async def play_next(ctx):
         if queues[ctx.guild.id] != []:
@@ -48,7 +48,7 @@ def run_bot():
             voice_clients[ctx.guild.id].play(player, after=lambda e: asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
         
             embed = discord.Embed(
-            title="Now Playing",
+            title="Now Playing 🎶",
             description=f"{song_title}",
             color=discord.Color.blue()
         )
@@ -56,20 +56,44 @@ def run_bot():
         except Exception as e:
             print(e)
 
+    @client.command(name="skip")
+    async def skip(ctx):
+        try:
+            embed = discord.Embed(
+                title="Skipped 🎶",
+                description="Current song has been skipped. Playing the next song...",
+                color=discord.Color.orange()
+            )
+            await ctx.send(embed=embed)
+            voice_clients[ctx.guild.id].stop()
+            await play_next(ctx)
+        except Exception as e:
+            print(e)
+
     @client.command(name="clearqueue")
     async def clearqueue(ctx):
         if ctx.guild.id in queues:
             queues[ctx.guild.id].clear()
-            await ctx.send("Queue cleared!")
+            embed = discord.Embed(
+                title="Queue Cleared 🧹",
+                description="The music queue has been cleared!",
+                color=discord.Color.green()
+            )
+            await ctx.send(embed=embed)
         else:
-            await ctx.send("There is no queue to clear.")
+            embed = discord.Embed(
+                title="No queue to clear ❌",
+                description="There is no queue to clear.",
+                color=discord.Color.red()
+            )
+            await ctx.send(embed=embed) 
     
     @client.command(name="pause")
     async def pause(ctx):
         try:
             voice_clients[ctx.guild.id].pause()
             embed = discord.Embed(
-                title="Music Paused 🎵",
+                title="Music Paused 🎶",
                 description="The music has been paused. Use the `.resume` command to continue playing.",
                 color=discord.Color.yellow()
             )
@@ -110,7 +134,13 @@ def run_bot():
         if ctx.guild.id not in queues:
             queues[ctx.guild.id] = []
         queues[ctx.guild.id].append(url)
-        await ctx.send("Added to queue!")
+
+        embed = discord.Embed(
+            title="Song Added to Queue! 🎶",
+            description=f"The song has been addded to the queue: {url}",
+            color=discord.Color.blue()
+        )
+        await ctx.send(embed=embed)
     
 
 
