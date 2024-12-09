@@ -23,7 +23,7 @@ def run_bot():
     async def on_ready():
         print(f'{client.user} is now playing music')
 
-    aysnc def play_next(ctx):
+    async def play_next(ctx):
         if queues[ctx.guild.id] != []:
             link = queues[ctx.guild.id].pop(0)
             await play(ctx, link)
@@ -45,7 +45,7 @@ def run_bot():
             
             player = discord.FFmpegOpusAudio(song_url, **ffmpeg_options)
 
-            voice_clients[ctx.guild.id].play(player, after=lambda e: asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop)
+            voice_clients[ctx.guild.id].play(player, after=lambda e: asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
         
             embed = discord.Embed(
             title="Now Playing",
@@ -55,6 +55,14 @@ def run_bot():
             await ctx.send(embed=embed)
         except Exception as e:
             print(e)
+
+    @client.command(name="clearqueue")
+    async def clearqueue(ctx):
+        if ctx.guild.id in queues:
+            queues[ctx.guild.id].clear()
+            await ctx.send("Queue cleared!")
+        else:
+            await ctx.send("There is no queue to clear.")
     
     @client.command(name="pause")
     async def pause(ctx):
@@ -87,6 +95,7 @@ def run_bot():
         try:
             voice_clients[ctx.guild.id].stop()
             await voice_clients[ctx.guild.id].disconnect()
+            del voice_clients[ctx.guild.id]
             embed = discord.Embed(
                 title="Music Stopped ⏹️",
                 description="Goodbye!",
