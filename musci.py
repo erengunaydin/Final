@@ -214,4 +214,58 @@ def run_bot():
         else:
             await ctx.send("There is no queue to shuffle!")
 
+    @client.command(name="commands")
+    async def help_command(ctx):
+        embed = discord.Embed(
+            title="🎵 Music Commands 🎵",
+            description="Here are all the available commands!",
+            color=discord.Color.blue()
+        )
+
+        commands_list = [
+            {
+                "name": "play <YouTube URL>",
+                "value": "Plays a song from the provided YouTube URL or adds it to the queue."
+            },
+            {
+                "name": "queue <YouTube URL>",
+                "value": "Adds a song to the queue without immediately playing it."
+            },
+            {
+                "name": "viewqueue",
+                "value": "Shows the current music queue (first 10 songs)."
+            },
+            {
+                "name": "skip",
+                "value": "Skips the currently playing song and plays the next song in the queue."
+            },
+            {
+                "name": "pause",
+                "value": "Pauses the currently playing song."
+            },
+            {
+                "name": "resume",
+                "value": "Resumes playing the paused song."
+            },
+            {
+                "name": "stop",
+                "value": "Stops the music and disconnects the bot from the voice channel."
+            },
+            {
+                "name": "clearqueue",
+                "value": "Removes all songs from the current queue."
+            },
+            {
+                "name": "shuffle",
+                "value": "Randomly shuffles the songs in the current queue."
+            }
+        ]
+        
+        for cmd in commands_list:
+            embed.add_field(name=cmd['name'], value=cmd['value'], inline=False)
+        
+        embed.set_footer(text="Use a '.' before each command. Example: .play")
+        
+        await ctx.send(embed=embed)
+
     client.run(TOKEN)
